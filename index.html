@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Navbar & Sidebar -->
     <nav class="navbar">
         <div class="burger" id="burger-menu">
             <div class="line"></div>
@@ -29,82 +28,99 @@
         </ul>
     </div>
 
-    <!-- Main Content -->
     <main class="content">
-        <!-- 1. Home Dashboard -->
-        <section id="home" class="page active">
-            <h2>Haii! Welcome back! ✨</h2>
-            <div class="dashboard-grid">
-                <div class="card">
-                    <h3>✅ Habit Summary</h3>
-                    <p id="home-habit-summary">Belum ada habit bulan ini!</p>
+        <div class="content-wrapper">
+            <section id="home" class="page active">
+                <h2>Haii! Welcome back! ✨</h2>
+                <div class="dashboard-grid">
+                    <div class="card circular-card">
+                        <h3>✅ Habit</h3>
+                        <div class="circle-chart" style="--prog: 75%;">
+                            <span>75%</span>
+                        </div>
+                        <p id="home-habit-summary">On track!</p>
+                    </div>
+                    <div class="card">
+                        <h3>🎭 Dominant Mood</h3>
+                        <p id="home-mood-summary" class="emoji-large">🤔</p>
+                    </div>
+                    <div class="card circular-card">
+                        <h3>📚 Reading</h3>
+                        <div class="circle-chart" style="--prog: 40%;">
+                            <span>40%</span>
+                        </div>
+                        <p id="home-reading-summary">Keep going!</p>
+                    </div>
                 </div>
-                <div class="card">
-                    <h3>🎭 Dominant Mood</h3>
-                    <p id="home-mood-summary" class="emoji-large">🤔</p>
+            </section>
+
+            <section id="habit" class="page">
+                <h2>✅ Habit Tracker (Bulanan)</h2>
+                <div class="input-group">
+                    <input type="text" id="habit-name" placeholder="Nama Habit Baru...">
+                    <button id="add-habit-btn">Tambah Habit!</button>
                 </div>
-                <div class="card">
-                    <h3>📚 Reading Progress</h3>
-                    <p id="home-reading-summary">0 Buku Selesai</p>
+                <div class="table-container">
+                    <table class="tracker-table" id="habit-table">
+                        <thead>
+                            <tr id="habit-header">
+                                <th>Habits</th>
+                                </tr>
+                        </thead>
+                        <tbody id="habit-list"></tbody>
+                    </table>
                 </div>
-                <div class="card">
-                    <h3>⏳ Time Overview</h3>
-                    <div class="time-mini-chart">Siap di-tracking!</div>
+            </section>
+
+            <section id="mood" class="page">
+                <h2>🎭 Mood Tracker (Bulanan)</h2>
+                <div class="mood-selector">
+                    <button class="mood-btn" data-mood="senang" style="background:#ffb6c1">😄 Happy</button>
+                    <button class="mood-btn" data-mood="cape" style="background:#cccccc">😫 Tired</button>
+                    <button class="mood-btn" data-mood="sedih" style="background:#8ab6d6">😢 Sad</button>
+                    <button class="mood-btn" data-mood="marah" style="background:#ff8b8b">😡 Angry</button>
                 </div>
-            </div>
-        </section>
+                <div class="input-group">
+                    <textarea id="mood-reason" placeholder="Kenapa ngerasa gitu hari ini?"></textarea>
+                    <button id="save-mood-btn">Simpan Mood!</button>
+                </div>
+                <div class="table-container">
+                    <table class="tracker-table mood-table" id="mood-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mood-list"></tbody>
+                    </table>
+                </div>
+            </section>
 
-        <!-- 2. Habit Tracker -->
-        <section id="habit" class="page">
-            <h2>✅ Habit Tracker</h2>
-            <div class="input-group">
-                <input type="text" id="habit-name" placeholder="Nama Habit Baru...">
-                <input type="text" id="habit-reward" placeholder="Custom Reward (jika 80%)...">
-                <button id="add-habit-btn">Tambah Habit!</button>
-            </div>
-            <div id="habit-list" class="tracker-list"></div>
-        </section>
+            <section id="reading" class="page">
+                <h2>📚 Reading Tracker</h2>
+                <div class="input-group">
+                    <input type="text" id="book-title" placeholder="Judul Buku...">
+                    <input type="number" id="book-total" placeholder="Total Halaman">
+                    <button id="add-book-btn">Mulai Baca!</button>
+                </div>
+                <div id="book-list" class="tracker-list"></div>
+            </section>
 
-        <!-- 3. Mood Tracker -->
-        <section id="mood" class="page">
-            <h2>🎭 Mood Tracker (Hari Ini)</h2>
-            <div class="mood-selector">
-                <button class="mood-btn" data-mood="senang">😄 Senang</button>
-                <button class="mood-btn" data-mood="cape">😫 Cape</button>
-                <button class="mood-btn" data-mood="sedih">😢 Sedih</button>
-                <button class="mood-btn" data-mood="kesal">😠 Kesal</button>
-                <button class="mood-btn" data-mood="marah">😡 Marah</button>
-            </div>
-            <textarea id="mood-reason" placeholder="Kenapa ngerasa gitu hari ini? Cerita donggg..."></textarea>
-            <button id="save-mood-btn">Simpan Mood!</button>
-            <div id="mood-history" class="history-list"></div>
-        </section>
-
-        <!-- 4. Reading Tracker -->
-        <section id="reading" class="page">
-            <h2>📚 Reading Tracker</h2>
-            <div class="input-group">
-                <input type="text" id="book-title" placeholder="Judul Buku...">
-                <input type="number" id="book-total" placeholder="Total Halaman">
-                <button id="add-book-btn">Mulai Baca!</button>
-            </div>
-            <div id="book-list" class="tracker-list"></div>
-        </section>
-
-        <!-- 5. Time Tracker -->
-        <section id="time" class="page">
-            <h2>⏳ Time Tracker (24 Jam)</h2>
-            <p class="subtitle">Klik kotak untuk ganti aktivitas yaaa!</p>
-            <div class="legend">
-                <span class="badge blue">Productive</span>
-                <span class="badge red">Study/Work</span>
-                <span class="badge grey">Sleep</span>
-                <span class="badge pink">Reading</span>
-                <span class="badge yellow">Having Fun</span>
-                <span class="badge purple">Rest</span>
-            </div>
-            <div id="time-grid" class="time-grid"></div>
-        </section>
+            <section id="time" class="page">
+                <h2>⏳ Time Tracker (24 Jam)</h2>
+                <p class="subtitle">Klik kotak untuk ganti aktivitas yaaa!</p>
+                <div class="legend">
+                    <span class="badge blue">Productive</span>
+                    <span class="badge red">Study/Work</span>
+                    <span class="badge grey">Sleep</span>
+                    <span class="badge pink">Reading</span>
+                    <span class="badge yellow">Having Fun</span>
+                    <span class="badge purple">Rest</span>
+                </div>
+                <div id="time-grid" class="time-grid"></div>
+            </section>
+        </div>
     </main>
 
     <script type="module" src="script.js"></script>
