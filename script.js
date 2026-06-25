@@ -1,8 +1,6 @@
-// Import Firebase langsung via CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-// Konfigurasi Firebase dari kamu
 const firebaseConfig = {
   apiKey: "AIzaSyCjylARNYWbJONlOK44QMF_1CBPcZGP2wc",
   authDomain: "pembagian-kelompok-mpi23b.firebaseapp.com",
@@ -12,44 +10,117 @@ const firebaseConfig = {
   appId: "1:13739269373:web:8a694d8309ebfa716cf294"
 };
 
-// Inisialisasi Firebase & Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 1. Sidebar & Menu Logic
+// 1. Navigation & Theme (Sama kayak sebelumnya)
 const burger = document.getElementById('burger-menu');
 const sidebar = document.getElementById('sidebar');
 const navLinks = document.querySelectorAll('.nav-links li');
 const pages = document.querySelectorAll('.page');
 
-burger.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
-});
+burger.addEventListener('click', () => sidebar.classList.toggle('active'));
 
 navLinks.forEach(link => {
     link.addEventListener('click', () => {
         navLinks.forEach(nav => nav.classList.remove('active'));
         link.classList.add('active');
-        
-        const target = link.getAttribute('data-target');
-        pages.forEach(page => {
-            page.classList.remove('active');
-            if(page.id === target) page.classList.add('active');
-        });
-
+        pages.forEach(page => page.classList.remove('active'));
+        document.getElementById(link.dataset.target).classList.add('active');
         if(window.innerWidth < 768) sidebar.classList.remove('active');
     });
 });
 
-// 2. Dark Mode Toggle
-const themeToggle = document.getElementById('theme-toggle');
-themeToggle.addEventListener('click', () => {
+document.getElementById('theme-toggle').addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    themeToggle.innerText = isDark ? '☀️' : '🌙';
 });
 
-// 3. Time Tracker Logic (24 Jam)
+// --- FITUR BARU: GENERATE GRID 31 HARI ---
+const habitHeader = document.getElementById('habit-header');
+for(let i = 1; i <= 31; i++) {
+    let th = document.createElement('th');
+    th.innerText = i;
+    habitHeader.appendChild(th);
+}
+
+const moodList = document.getElementById('mood-list');
+for(let i = 1; i <= 31; i++) {
+    let tr = document.createElement('tr');
+    let tdDay = document.createElement('td');
+    tdDay.innerText = i;
+    tr.appendChild(tdDay);
+    for(let j = 0; j < 12; j++) {
+        let tdMonth = document.createElement('td');
+        tdMonth.style.cursor = "pointer";
+        tdMonth.addEventListener('click', () => {
+            if(currentMoodColor) tdMonth.style.background = currentMoodColor;
+        });
+        tr.appendChild(tdMonth);
+    }
+    moodList.appendChild(tr);
+}
+
+// 2. Load Data dari Firebase pas Refresh!
+async function loadHabits() {
+    const listHabit = document.getElementById('habit-list');
+    listHabit.innerHTML = ''; 
+    const querySnapshot = await getDocs(collection(db, "habits"));
+    
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        appendHabitToGrid(data.name);
+    });
+}
+
+function appendHabitToGrid(name) {
+    const listHabit = document.getElementById('habit-list');
+    let tr = document.createElement('tr');
+    
+    let tdName = document.createElement('td');
+    tdName.innerHTML = `<strong>${name}</strong>`;
+    tr.appendChild(tdName);
+
+    for(let i = 1; i <= 31; i++) {
+        let td = document.createElement('td');
+        let circle = document.createElement('span');
+        circle.className = 'habit-cell';
+        circle.addEventListener('click', () => circle.classList.toggle('done'));
+        td.appendChild(circle);
+        tr.appendChild(td);
+    }
+    listHabit.appendChild(tr);
+}
+
+// Panggil fungsi load pas web kebuka
+loadHabits();
+
+// 3. Tambah Habit ke Firebase
+document.getElementById('add-habit-btn').addEventListener('click', async () => {
+    let name = document.getElementById('habit-name').value;
+    if(!name) return alert('Isi nama habitnya dulu yaaa!');
+    
+    appendHabitToGrid(name);
+    document.getElementById('habit-name').value = '';
+
+    try {
+        await addDoc(collection(db, "habits"), { name: name });
+    } catch (e) {
+        console.error("Gagal simpan: ", e);
+    }
+});
+
+// 4. Mood Tracker logic
+let currentMoodColor = '';
+const moodBtns = document.querySelectorAll('.mood-btn');
+moodBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        moodBtns.forEach(b => b.style.opacity = '0.5');
+        btn.style.opacity = '1';
+        currentMoodColor = btn.style.background;
+    });
+});
+
+// 5. Time Tracker Grid
 const timeGrid = document.getElementById('time-grid');
 const timeColors = ['grey', 'blue', 'red', 'pink', 'yellow', 'purple'];
 
@@ -62,101 +133,8 @@ for(let i = 0; i < 24; i++) {
     box.addEventListener('click', () => {
         let currentIndex = parseInt(box.dataset.colorIndex);
         let nextIndex = (currentIndex + 1) % timeColors.length;
-        
-        box.classList.remove(timeColors[currentIndex]);
-        box.classList.add(timeColors[nextIndex]);
+        box.className = `time-box ${timeColors[nextIndex]}`;
         box.dataset.colorIndex = nextIndex;
-        
-        box.innerHTML = `✔️<br>${i}:00`; 
     });
     timeGrid.appendChild(box);
 }
-
-// 4. Habit Tracker Logic
-const btnHabit = document.getElementById('add-habit-btn');
-const listHabit = document.getElementById('habit-list');
-
-btnHabit.addEventListener('click', async () => {
-    let name = document.getElementById('habit-name').value;
-    let reward = document.getElementById('habit-reward').value;
-    if(!name) return alert('Isi nama habitnya dulu yaaa!');
-
-    // Tampilkan di UI
-    let item = document.createElement('div');
-    item.className = 'tracker-item';
-    item.innerHTML = `
-        <div>
-            <strong>${name}</strong> <br>
-            <small>🎁 Reward: ${reward}</small>
-        </div>
-        <button onclick="this.innerText = '✅ Done!'; this.style.background = '#bbded6';">Tandai Hari Ini</button>
-    `;
-    listHabit.appendChild(item);
-    
-    document.getElementById('home-habit-summary').innerText = `Ada habit baru: ${name}! Semangaaat!`;
-    document.getElementById('habit-name').value = '';
-    document.getElementById('habit-reward').value = '';
-
-    // Contoh save ke Firebase (Opsional, hapus/komen kalau belum butuh)
-    try {
-        await addDoc(collection(db, "habits"), { name: name, reward: reward });
-    } catch (e) {
-        console.error("Gagal simpan ke Firebase: ", e);
-    }
-});
-
-// 5. Reading Tracker Logic
-const btnRead = document.getElementById('add-book-btn');
-const listRead = document.getElementById('book-list');
-
-btnRead.addEventListener('click', () => {
-    let title = document.getElementById('book-title').value;
-    let total = document.getElementById('book-total').value;
-    if(!title || !total) return alert('Isi lengkap data bukunya yaaa!');
-
-    let item = document.createElement('div');
-    item.className = 'tracker-item';
-    item.innerHTML = `
-        <div>
-            <strong>📖 ${title}</strong> <br>
-            <small>Progres: <span class="prog-val">0</span> / ${total} Halaman</small>
-        </div>
-        <button onclick="let v = this.previousElementSibling.querySelector('.prog-val'); let cur = parseInt(v.innerText) + 10; if(cur >= ${total}) { this.innerText = '🎉 DONE!'; v.innerText = ${total}; } else { v.innerText = cur; }">+10 Hal</button>
-    `;
-    listRead.appendChild(item);
-    document.getElementById('book-title').value = '';
-    document.getElementById('book-total').value = '';
-});
-
-// 6. Mood Tracker Logic
-const moodBtns = document.querySelectorAll('.mood-btn');
-let currentMood = '';
-
-moodBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        moodBtns.forEach(b => b.style.opacity = '0.5');
-        btn.style.opacity = '1';
-        currentMood = btn.innerText;
-    });
-});
-
-document.getElementById('save-mood-btn').addEventListener('click', async () => {
-    let reason = document.getElementById('mood-reason').value;
-    if(!currentMood) return alert('Pilih moodnya dulu donggg!');
-    
-    let history = document.getElementById('mood-history');
-    let item = document.createElement('div');
-    item.className = 'tracker-item';
-    item.innerHTML = `<strong>${currentMood}</strong><p>${reason}</p>`;
-    history.prepend(item);
-    
-    document.getElementById('home-mood-summary').innerText = currentMood;
-    document.getElementById('mood-reason').value = '';
-
-    // Contoh save ke Firebase (Opsional, hapus/komen kalau belum butuh)
-    try {
-        await addDoc(collection(db, "moods"), { mood: currentMood, reason: reason });
-    } catch (e) {
-        console.error("Gagal simpan mood ke Firebase: ", e);
-    }
-});
