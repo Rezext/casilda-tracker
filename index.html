@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casilda Tracker 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar & Sidebar -->
+    <nav class="navbar">
+        <div class="burger" id="burger-menu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <h1 class="logo">Casilda Tracker 🌷</h1>
+        <button id="theme-toggle">🌙</button>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <ul class="nav-links">
+            <li data-target="home" class="active">🏠 Home Dashboard</li>
+            <li data-target="habit">✅ Habit Tracker</li>
+            <li data-target="mood">🎭 Mood Tracker</li>
+            <li data-target="reading">📚 Reading Tracker</li>
+            <li data-target="time">⏳ Time Tracker</li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <main class="content">
+        <!-- 1. Home Dashboard -->
+        <section id="home" class="page active">
+            <h2>Haii! Welcome back! ✨</h2>
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>✅ Habit Summary</h3>
+                    <p id="home-habit-summary">Belum ada habit bulan ini!</p>
+                </div>
+                <div class="card">
+                    <h3>🎭 Dominant Mood</h3>
+                    <p id="home-mood-summary" class="emoji-large">🤔</p>
+                </div>
+                <div class="card">
+                    <h3>📚 Reading Progress</h3>
+                    <p id="home-reading-summary">0 Buku Selesai</p>
+                </div>
+                <div class="card">
+                    <h3>⏳ Time Overview</h3>
+                    <div class="time-mini-chart">Siap di-tracking!</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Habit Tracker -->
+        <section id="habit" class="page">
+            <h2>✅ Habit Tracker</h2>
+            <div class="input-group">
+                <input type="text" id="habit-name" placeholder="Nama Habit Baru...">
+                <input type="text" id="habit-reward" placeholder="Custom Reward (jika 80%)...">
+                <button id="add-habit-btn">Tambah Habit!</button>
+            </div>
+            <div id="habit-list" class="tracker-list"></div>
+        </section>
+
+        <!-- 3. Mood Tracker -->
+        <section id="mood" class="page">
+            <h2>🎭 Mood Tracker (Hari Ini)</h2>
+            <div class="mood-selector">
+                <button class="mood-btn" data-mood="senang">😄 Senang</button>
+                <button class="mood-btn" data-mood="cape">😫 Cape</button>
+                <button class="mood-btn" data-mood="sedih">😢 Sedih</button>
+                <button class="mood-btn" data-mood="kesal">😠 Kesal</button>
+                <button class="mood-btn" data-mood="marah">😡 Marah</button>
+            </div>
+            <textarea id="mood-reason" placeholder="Kenapa ngerasa gitu hari ini? Cerita donggg..."></textarea>
+            <button id="save-mood-btn">Simpan Mood!</button>
+            <div id="mood-history" class="history-list"></div>
+        </section>
+
+        <!-- 4. Reading Tracker -->
+        <section id="reading" class="page">
+            <h2>📚 Reading Tracker</h2>
+            <div class="input-group">
+                <input type="text" id="book-title" placeholder="Judul Buku...">
+                <input type="number" id="book-total" placeholder="Total Halaman">
+                <button id="add-book-btn">Mulai Baca!</button>
+            </div>
+            <div id="book-list" class="tracker-list"></div>
+        </section>
+
+        <!-- 5. Time Tracker -->
+        <section id="time" class="page">
+            <h2>⏳ Time Tracker (24 Jam)</h2>
+            <p class="subtitle">Klik kotak untuk ganti aktivitas yaaa!</p>
+            <div class="legend">
+                <span class="badge blue">Productive</span>
+                <span class="badge red">Study/Work</span>
+                <span class="badge grey">Sleep</span>
+                <span class="badge pink">Reading</span>
+                <span class="badge yellow">Having Fun</span>
+                <span class="badge purple">Rest</span>
+            </div>
+            <div id="time-grid" class="time-grid"></div>
+        </section>
+    </main>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
